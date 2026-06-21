@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dunia Bermain Kirby: 6 Game Seru</title>
+    <title>Dunia Bermain Sanrio: 6 Game Seru</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            background-color: #87CEEB;
+            background-color: #e0f2fe; /* Warna pastel biru langit lembut */
             touch-action: none;
             font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
             user-select: none;
@@ -21,20 +21,22 @@
             height: 100vh;
         }
         .text-outline {
-            text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+            text-shadow: 2px 2px 0 #475569, -2px -2px 0 #475569, 2px -2px 0 #475569, -2px 2px 0 #475569;
         }
         .title-outline {
-            text-shadow: 4px 4px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 4px 4px 0 #1e3a8a;
+            text-shadow: 4px 4px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 4px 4px 0 #38bdf8;
         }
     </style>
 </head>
 <body>
 
+    <!-- Area Game Canvas -->
     <canvas id="gameCanvas"></canvas>
 
+    <!-- HUD Informasi Game (Skor & Nyawa) -->
     <div id="hud" class="fixed top-4 left-0 w-full px-6 flex justify-between items-center pointer-events-none z-10 hidden">
         <div class="text-white text-2xl md:text-3xl font-black text-outline flex flex-col">
-            <span id="game-title-hud" class="text-pink-200 text-xs md:text-sm tracking-wider">GAME</span>
+            <span id="game-title-hud" class="text-sky-300 text-xs md:text-sm tracking-wider">GAME</span>
             <span>Skor: <span id="score-display" class="text-yellow-300">0</span></span>
         </div>
         <div id="lives-display" class="text-3xl md:text-4xl text-outline tracking-wider">
@@ -42,67 +44,111 @@
         </div>
     </div>
 
-    <div id="ui-layer" class="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-20 bg-black/30 backdrop-blur-sm transition-all duration-300">
+    <!-- Lapisan Antarmuka Layar (Lobby, Mulai, Game Over) -->
+    <div id="ui-layer" class="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-20 bg-black/25 backdrop-blur-sm transition-all duration-300">
         
-        <div id="lobby-screen" class="pointer-events-auto bg-white/95 p-6 md:p-8 rounded-[3rem] shadow-2xl text-center border-8 border-pink-300 max-w-4xl mx-4 transform scale-100 transition-all max-h-[95vh] overflow-y-auto">
-            <h1 class="text-4xl md:text-5xl font-black text-pink-500 mb-1 tracking-widest title-outline">
-                KIRBY 6-IN-1 ARCADE
+        <!-- ================= LOBBY / MENU UTAMA (6 GAMES & 6 KARAKTER) ================= -->
+        <div id="lobby-screen" class="pointer-events-auto bg-white/95 p-6 md:p-8 rounded-[3rem] shadow-2xl text-center border-8 border-sky-200 max-w-4xl mx-4 transform scale-100 transition-all max-h-[95vh] overflow-y-auto">
+            <h1 class="text-3xl md:text-5xl font-black text-sky-400 mb-1 tracking-widest title-outline animate-pulse">
+                SANRIO PLAYROOM
             </h1>
-            <p class="text-xs md:text-sm text-blue-600 font-bold mb-4">Pilih salah satu dari 6 game seru dengan 5 hati penuh!</p>
+            <p class="text-xs md:text-sm text-pink-400 font-bold mb-4">Pilih karakter kesayanganmu dan mainkan 6 game seru!</p>
             
+            <!-- Karakter Selector Grid -->
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-6 max-w-3xl mx-auto">
+                <!-- Cinnamoroll -->
+                <button id="select-cinnamoroll" class="char-btn border-4 border-sky-300 bg-sky-100 p-2 rounded-2xl transition transform scale-105 flex flex-col items-center hover:scale-105">
+                    <span class="text-3xl mb-1">☁️</span>
+                    <span class="text-xs font-black text-sky-700">Cinna</span>
+                </button>
+                <!-- Kuromi -->
+                <button id="select-kuromi" class="char-btn border-4 border-gray-300 bg-slate-50 p-2 rounded-2xl transition transform flex flex-col items-center hover:scale-105">
+                    <span class="text-3xl mb-1">😈</span>
+                    <span class="text-xs font-black text-purple-700">Kuromi</span>
+                </button>
+                <!-- My Melody -->
+                <button id="select-mymelody" class="char-btn border-4 border-gray-300 bg-slate-50 p-2 rounded-2xl transition transform flex flex-col items-center hover:scale-105">
+                    <span class="text-3xl mb-1">🐰</span>
+                    <span class="text-xs font-black text-pink-700">Melody</span>
+                </button>
+                <!-- Pompompurin -->
+                <button id="select-pompompurin" class="char-btn border-4 border-gray-300 bg-slate-50 p-2 rounded-2xl transition transform flex flex-col items-center hover:scale-105">
+                    <span class="text-3xl mb-1">🍮</span>
+                    <span class="text-xs font-black text-amber-700">Purin</span>
+                </button>
+                <!-- Hello Kitty -->
+                <button id="select-hellokitty" class="char-btn border-4 border-gray-300 bg-slate-50 p-2 rounded-2xl transition transform flex flex-col items-center hover:scale-105">
+                    <span class="text-3xl mb-1">🎀</span>
+                    <span class="text-xs font-black text-red-700">Kitty</span>
+                </button>
+                <!-- Pochacco -->
+                <button id="select-pochacco" class="char-btn border-4 border-gray-300 bg-slate-50 p-2 rounded-2xl transition transform flex flex-col items-center hover:scale-105">
+                    <span class="text-3xl mb-1">🐶</span>
+                    <span class="text-xs font-black text-green-700">Pochacco</span>
+                </button>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-2">
-                <button id="choose-game1" class="bg-gradient-to-br from-pink-100 to-pink-200 hover:from-pink-200 hover:to-pink-300 border-4 border-pink-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
-                    <span class="text-3xl mb-1 animate-bounce">🍎</span>
+                <!-- Game 1 -->
+                <button id="choose-game1" class="bg-gradient-to-br from-pink-50 to-pink-100 hover:from-pink-100 hover:to-pink-200 border-4 border-pink-300 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                    <span class="text-3xl mb-1 animate-bounce">🧁</span>
                     <span class="font-extrabold text-pink-700 text-sm md:text-base">1. Tangkap Makanan</span>
-                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Geser Kirby untuk menangkap makanan jatuh!</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Tangkap makanan jatuh (Es Krim, Cupcake, Apel) & awas bom!</span>
                     <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-catch">0</span></span>
                 </button>
                 
-                <button id="choose-game2" class="bg-gradient-to-br from-yellow-100 to-yellow-200 hover:from-yellow-200 hover:to-yellow-300 border-4 border-yellow-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                <!-- Game 2 -->
+                <button id="choose-game2" class="bg-gradient-to-br from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-200 border-4 border-yellow-300 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
                     <span class="text-3xl mb-1 animate-pulse">⭐</span>
-                    <span class="font-extrabold text-yellow-700 text-sm md:text-base">2. Terbang Bintang</span>
-                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Ketuk layar agar Kirby melayang melewati permen!</span>
+                    <span class="font-extrabold text-yellow-700 text-sm md:text-base">2. Terbang Bebas</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Terbang melayang melewati tiang permen manis di langit!</span>
                     <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-fly">0</span></span>
                 </button>
 
-                <button id="choose-game3" class="bg-gradient-to-br from-green-100 to-green-200 hover:from-green-200 hover:to-green-300 border-4 border-green-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                <!-- Game 3 -->
+                <button id="choose-game3" class="bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 border-4 border-green-300 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
                     <span class="text-3xl mb-1 animate-bounce">🍬</span>
                     <span class="font-extrabold text-green-700 text-sm md:text-base">3. Memantul Permen</span>
-                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Pantulkan Kirby untuk menghancurkan permen!</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Pantulkan karaktermu untuk hancurkan balok permen warna-warni!</span>
                     <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-bounce">0</span></span>
                 </button>
 
-                <button id="choose-game4" class="bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 border-4 border-blue-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                <!-- Game 4 -->
+                <button id="choose-game4" class="bg-gradient-to-br from-teal-50 to-teal-100 hover:from-teal-100 hover:to-teal-200 border-4 border-teal-300 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
                     <span class="text-3xl mb-1 animate-pulse">☁️</span>
-                    <span class="font-extrabold text-blue-700 text-sm md:text-base">4. Lompat Tinggi</span>
-                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Lompat dari awan ke awan setinggi mungkin!</span>
+                    <span class="font-extrabold text-teal-700 text-sm md:text-base">4. Lompat Awan</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Lompat setinggi mungkin dari awan ke awan!</span>
                     <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-jump">0</span></span>
                 </button>
 
-                <button id="choose-game5" class="bg-gradient-to-br from-teal-100 to-teal-200 hover:from-teal-200 hover:to-teal-300 border-4 border-teal-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                <!-- Game 5 -->
+                <button id="choose-game5" class="bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 border-4 border-blue-300 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
                     <span class="text-3xl mb-1 animate-bounce">🏄</span>
-                    <span class="font-extrabold text-teal-700 text-sm md:text-base">5. Selancar Ombak</span>
-                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Geser naik-turun untuk menghindari pusaran air!</span>
+                    <span class="font-extrabold text-blue-700 text-sm md:text-base">5. Selancar Bintang</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Berselancar di atas bintang menghindari pusaran air!</span>
                     <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-surf">0</span></span>
                 </button>
 
-                <button id="choose-game6" class="bg-gradient-to-br from-purple-100 to-purple-200 hover:from-purple-200 hover:to-purple-300 border-4 border-purple-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
-                    <span class="text-3xl mb-1 animate-pulse">🧱</span>
-                    <span class="font-extrabold text-purple-700 text-sm md:text-base">6. Menyusun Balok</span>
-                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Tangkap mainan balok berjatuhan untuk buat menara!</span>
+                <!-- Game 6 -->
+                <button id="choose-game6" class="bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 border-4 border-purple-300 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                    <span class="text-3xl mb-1 animate-pulse">🍩</span>
+                    <span class="font-extrabold text-purple-700 text-sm md:text-base">6. Menyusun Donat</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Tangkap donat manis berjatuhan dan susun jadi menara tinggi!</span>
                     <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-stack">0</span></span>
                 </button>
             </div>
+            <p class="text-xs text-sky-400 font-bold mt-2">Semua mode permainan dibekali 5 hati penuh agar asyik dimainkan! ❤️</p>
         </div>
 
-        <div id="game-over-screen" class="hidden pointer-events-auto bg-white/95 p-8 md:p-12 rounded-[3rem] shadow-2xl text-center border-8 border-red-400 max-w-md mx-4 transform transition-all">
-            <h1 class="text-4xl md:text-5xl font-black text-red-500 mb-2 animate-pulse">Permainan Selesai!</h1>
+        <!-- ================= LAYAR GAME OVER ================= -->
+        <div id="game-over-screen" class="hidden pointer-events-auto bg-white/95 p-8 md:p-12 rounded-[3rem] shadow-2xl text-center border-8 border-pink-300 max-w-md mx-4 transform transition-all">
+            <h1 class="text-4xl md:text-5xl font-black text-pink-400 mb-2 animate-pulse">Permainan Selesai!</h1>
             <p id="game-over-title" class="text-lg text-blue-500 font-bold mb-4">Nama Game</p>
             <p class="text-xl text-gray-700 mb-2 font-bold">Skor Kamu: <br><span id="final-score" class="text-5xl md:text-6xl text-yellow-500 text-outline">0</span></p>
-            <p id="new-record-msg" class="text-pink-500 font-extrabold text-xl mb-6 hidden animate-bounce">🎉 REKOR BARU! 🎉</p>
+            <p id="new-record-msg" class="text-sky-400 font-extrabold text-xl mb-6 hidden animate-bounce">🎉 REKOR BARU! 🎉</p>
             
             <div class="flex flex-col sm:flex-row gap-3 justify-center mt-4">
-                <button id="restart-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-black py-3 px-6 rounded-full text-lg shadow-[0_5px_0_#1e3a8a] transition transform hover:scale-105">
+                <button id="restart-btn" class="bg-pink-400 hover:bg-pink-500 text-white font-black py-3 px-6 rounded-full text-lg shadow-[0_5px_0_#db2777] transition transform hover:scale-105">
                     Main Lagi!
                 </button>
                 <button id="lobby-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-black py-3 px-6 rounded-full text-lg shadow-[0_5px_0_#374151] transition transform hover:scale-105">
@@ -135,8 +181,51 @@
             g5: document.getElementById('choose-game5'),
             g6: document.getElementById('choose-game6'),
             restart: document.getElementById('restart-btn'),
-            lobby: document.getElementById('lobby-btn')
+            lobby: document.getElementById('lobby-btn'),
+            selCinna: document.getElementById('select-cinnamoroll'),
+            selKuromi: document.getElementById('select-kuromi'),
+            selMelody: document.getElementById('select-mymelody'),
+            selPurin: document.getElementById('select-pompompurin'),
+            selKitty: document.getElementById('select-hellokitty'),
+            selPochacco: document.getElementById('select-pochacco')
         };
+
+        // Karakter Terpilih (Default: cinnamoroll)
+        let selectedCharacter = 'cinnamoroll';
+
+        function updateCharSelection(charName, btnElement) {
+            selectedCharacter = charName;
+            
+            // Atur gaya tombol semua karakter ke semula
+            document.querySelectorAll('.char-btn').forEach(btn => {
+                btn.classList.add('scale-100', 'border-gray-300', 'bg-slate-50');
+                btn.classList.remove('scale-105', 'border-sky-300', 'bg-sky-100', 'border-pink-400', 'bg-pink-100', 'border-purple-400', 'bg-purple-100', 'border-amber-400', 'bg-amber-100', 'border-red-400', 'bg-red-100', 'border-green-400', 'bg-green-100');
+            });
+
+            // Atur gaya khusus untuk tombol karakter aktif
+            if(charName === 'cinnamoroll') {
+                btnElement.classList.add('scale-105', 'border-sky-300', 'bg-sky-100');
+            } else if(charName === 'kuromi') {
+                btnElement.classList.add('scale-105', 'border-purple-400', 'bg-purple-100');
+            } else if(charName === 'mymelody') {
+                btnElement.classList.add('scale-105', 'border-pink-400', 'bg-pink-100');
+            } else if(charName === 'pompompurin') {
+                btnElement.classList.add('scale-105', 'border-amber-400', 'bg-amber-100');
+            } else if(charName === 'hellokitty') {
+                btnElement.classList.add('scale-105', 'border-red-400', 'bg-red-100');
+            } else if(charName === 'pochacco') {
+                btnElement.classList.add('scale-105', 'border-green-400', 'bg-green-100');
+            }
+            btnElement.classList.remove('scale-100', 'border-gray-300', 'bg-slate-50');
+            playSound('eat');
+        }
+
+        buttons.selCinna.addEventListener('click', (e) => updateCharSelection('cinnamoroll', buttons.selCinna));
+        buttons.selKuromi.addEventListener('click', (e) => updateCharSelection('kuromi', buttons.selKuromi));
+        buttons.selMelody.addEventListener('click', (e) => updateCharSelection('mymelody', buttons.selMelody));
+        buttons.selPurin.addEventListener('click', (e) => updateCharSelection('pompompurin', buttons.selPurin));
+        buttons.selKitty.addEventListener('click', (e) => updateCharSelection('hellokitty', buttons.selKitty));
+        buttons.selPochacco.addEventListener('click', (e) => updateCharSelection('pochacco', buttons.selPochacco));
 
         // Skor Terbaik
         let records = {
@@ -239,17 +328,17 @@
             if (gameType === 'catch') {
                 player.x = canvas.width/2; player.y = canvas.height - 110; gameTitleHud.innerText = "1. TANGKAP MAKANAN"; gameStarted = true;
             } else if (gameType === 'fly') {
-                player.x = 150; player.y = canvas.height/2; gameTitleHud.innerText = "2. TERBANG BINTANG";
+                player.x = 150; player.y = canvas.height/2; gameTitleHud.innerText = "2. TERBANG BEBAS";
             } else if (gameType === 'bounce') {
                 paddle.width = 140; paddle.y = canvas.height - 80; paddle.x = canvas.width/2 - 70;
                 ball.active = false; initBricks(); gameTitleHud.innerText = "3. MEMANTUL PERMEN"; gameStarted = true;
             } else if (gameType === 'jump') {
                 player.x = canvas.width/2; player.y = canvas.height - 150; player.vy = -12;
-                initPlatforms(); gameTitleHud.innerText = "4. LOMPAT TINGGI";
+                initPlatforms(); gameTitleHud.innerText = "4. LOMPAT AWAN";
             } else if (gameType === 'surf') {
                 player.x = 120; player.y = canvas.height/2; player.targetY = canvas.height/2; gameTitleHud.innerText = "5. SELANCAR OMBAK"; gameStarted = true;
             } else if (gameType === 'stack') {
-                player.x = canvas.width/2; player.y = canvas.height - 80; stackTowerHeight = 0; gameTitleHud.innerText = "6. MENYUSUN BALOK"; gameStarted = true;
+                player.x = canvas.width/2; player.y = canvas.height - 80; stackTowerHeight = 0; gameTitleHud.innerText = "6. MENYUSUN DONAT"; gameStarted = true;
             }
 
             updateHUD();
@@ -274,7 +363,7 @@
         }
 
         function initBricks() {
-            bricks = []; const colors = ['#ff7675', '#fdcb6e', '#74b9ff', '#55efc4'];
+            bricks = []; const colors = ['#f472b6', '#fbbf24', '#38bdf8', '#34d399'];
             let bWidth = Math.floor((canvas.width - 40) / 8);
             for (let r = 0; r < 4; r++) {
                 for (let c = 0; c < 8; c++) {
@@ -290,39 +379,381 @@
             }
         }
 
-        function drawKirby(ctx, x, y, size, angle, isMouthOpen) {
+        // --- SISTEM GAMBAR DINAMIS 6 KARAKTER SANRIO ---
+        function drawActivePlayer(ctx, x, y, size, angle, isMouthOpen) {
             ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
-            ctx.fillStyle = '#e10032';
-            ctx.beginPath(); ctx.ellipse(-size*0.5, size*0.6, size*0.35, size*0.2, -Math.PI/8, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(size*0.5, size*0.6, size*0.35, size*0.2, Math.PI/8, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#ffb6c1'; ctx.lineWidth = 3; ctx.strokeStyle = '#4a0e2e';
-            ctx.beginPath(); ctx.arc(0, 0, size, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-            ctx.fillStyle = '#ff69b4'; ctx.beginPath(); ctx.ellipse(-size*0.5, size*0.15, size*0.15, size*0.08, 0, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(size*0.5, size*0.15, size*0.15, size*0.08, 0, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#1e272e'; ctx.beginPath(); ctx.ellipse(-size*0.2, -size*0.15, size*0.1, size*0.25, 0, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.ellipse(size*0.2, -size*0.15, size*0.1, size*0.25, 0, 0, Math.PI*2); ctx.fill();
-            if (isMouthOpen) {
-                ctx.fillStyle = '#9e1b42'; ctx.beginPath(); ctx.arc(0, size*0.15, size*0.2, 0, Math.PI*2); ctx.fill();
-            } else {
-                ctx.beginPath(); ctx.arc(0, size*0.1, size*0.08, 0, Math.PI); ctx.stroke();
+            ctx.shadowColor = 'rgba(0,0,0,0.06)'; ctx.shadowBlur = 6; ctx.shadowOffsetY = 4;
+
+            if (selectedCharacter === 'cinnamoroll') {
+                // Gambar Cinnamoroll Persis Seperti Foto Kedua Kirimanmu!
+                // Telinga Floppy Sangat Panjang dan Lebar
+                ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.ellipse(-size*1.2, size*0.15, size*0.4, size*0.75, Math.PI/7, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.ellipse(size*1.2, size*0.15, size*0.4, size*0.75, -Math.PI/7, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Kepala Putih Bulat Elips Samping
+                ctx.beginPath(); ctx.ellipse(0, 0, size*1.1, size*0.85, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // TOPI BARET GARIS-GARIS BIRU MUDA & PUTIH
+                ctx.save();
+                ctx.translate(-size*0.2, -size*0.7);
+                ctx.rotate(-Math.PI/12);
+                
+                ctx.fillStyle = '#7dd3fc';
+                ctx.beginPath(); ctx.ellipse(0, 0, size*0.6, size*0.18, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                ctx.clip();
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(-size, -size, size*2, size);
+                ctx.fillStyle = '#7dd3fc';
+                for (let i = -5; i < 5; i++) {
+                    ctx.fillRect(i * 15, -size, 8, size*2);
+                }
+                ctx.restore();
+                ctx.save();
+                ctx.translate(-size*0.2, -size*0.7);
+                ctx.rotate(-Math.PI/12);
+                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.ellipse(0, 0, size*0.6, size*0.18, 0, 0, Math.PI*2); ctx.stroke();
+                
+                // BINTANG KUNING PADA TOPI
+                ctx.translate(-size*0.35, size*0.05);
+                drawStarShape(ctx, 0, 0, size*0.18, '#facc15', '#d97706');
+                ctx.restore();
+
+                // DASI KUPU-KUPU BIRU MUDA DI LEHER
+                ctx.fillStyle = '#7dd3fc'; ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.ellipse(-size*0.18, size*0.6, size*0.16, size*0.1, -Math.PI/12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.ellipse(size*0.18, size*0.6, size*0.16, size*0.1, Math.PI/12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(0, size*0.6, size*0.06, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Pipi Blush Merona Pink Pastel
+                ctx.fillStyle = '#fbcfe8';
+                ctx.beginPath(); ctx.arc(-size*0.5, size*0.15, size*0.16, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size*0.5, size*0.15, size*0.16, 0, Math.PI*2); ctx.fill();
+
+                // Mata Biru Terang Bulat Elips Cinnamoroll
+                ctx.fillStyle = '#2563eb';
+                ctx.beginPath(); ctx.ellipse(-size*0.35, -size*0.05, size*0.08, size*0.14, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(size*0.35, -size*0.05, size*0.08, size*0.14, 0, 0, Math.PI*2); ctx.fill();
+
+                // Mulut Tersenyum Lebar Khas Foto
+                ctx.strokeStyle = '#475569'; ctx.lineWidth = 2.5;
+                ctx.fillStyle = '#fda4af';
+                ctx.beginPath(); ctx.arc(0, size*0.1, size*0.12, 0, Math.PI); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(-size*0.12, size*0.1); ctx.lineTo(size*0.12, size*0.1); ctx.stroke();
+
+            } else if (selectedCharacter === 'kuromi') {
+                // Gambar Kuromi bertema Jester Ungu/Hitam Punk
+                // Telinga jester runcing kiri & kanan
+                ctx.fillStyle = '#1e1b4b'; ctx.strokeStyle = '#000000'; ctx.lineWidth = 3.5;
+                ctx.beginPath();
+                ctx.moveTo(-size*0.7, -size*0.4); ctx.lineTo(-size*0.8, -size*1.3); ctx.lineTo(-size*0.2, -size*0.6);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(size*0.7, -size*0.4); ctx.lineTo(size*0.8, -size*1.3); ctx.lineTo(size*0.2, -size*0.6);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+
+                // Puffball pink di ujung telinga jester
+                ctx.fillStyle = '#f472b6';
+                ctx.beginPath(); ctx.arc(-size*0.8, -size*1.3, size*0.12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(size*0.8, -size*1.3, size*0.12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Kepala Utama Hitam
+                ctx.fillStyle = '#1e1b4b';
+                ctx.beginPath(); ctx.arc(0, 0, size*0.95, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Inner Face Putih Kuromi
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.ellipse(0, size*0.1, size*0.75, size*0.65, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Tengkorak Pink di Dahi Kuromi
+                ctx.fillStyle = '#f472b6';
+                ctx.beginPath(); ctx.arc(0, -size*0.4, size*0.12, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(-size*0.06, -size*0.28, size*0.05, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size*0.06, -size*0.28, size*0.05, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#000000'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(0, -size*0.4, size*0.12, 0, Math.PI*2); ctx.stroke();
+                // Mata tengkorak
+                ctx.fillStyle = '#1e1b4b';
+                ctx.beginPath(); ctx.arc(-size*0.04, -size*0.42, size*0.03, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size*0.04, -size*0.42, size*0.03, 0, Math.PI*2); ctx.fill();
+
+                // Mata slanted marah nakal Kuromi
+                ctx.fillStyle = '#f472b6';
+                ctx.beginPath(); ctx.ellipse(-size*0.3, -size*0.02, size*0.12, size*0.16, Math.PI/10, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.ellipse(size*0.3, -size*0.02, size*0.12, size*0.16, -Math.PI/10, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#1e1b4b';
+                ctx.beginPath(); ctx.ellipse(-size*0.32, -size*0.02, size*0.06, size*0.1, Math.PI/10, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(size*0.28, -size*0.02, size*0.06, size*0.1, -Math.PI/10, 0, Math.PI*2); ctx.fill();
+
+                // Alis Marah Kuromi
+                ctx.strokeStyle = '#000000'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(-size*0.45, -size*0.22); ctx.lineTo(-size*0.15, -size*0.12); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(size*0.45, -size*0.22); ctx.lineTo(size*0.15, -size*0.12); ctx.stroke();
+
+                // Pipi pink Kuromi
+                ctx.fillStyle = '#fbcfe8';
+                ctx.beginPath(); ctx.arc(-size*0.5, size*0.22, size*0.12, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size*0.5, size*0.22, size*0.12, 0, Math.PI*2); ctx.fill();
+
+                // Mulut senyum licik
+                ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.arc(0, size*0.2, size*0.08, 0, Math.PI); ctx.stroke();
+
+            } else if (selectedCharacter === 'mymelody') {
+                // Gambar My Melody Kelinci Kerudung Pink
+                // Telinga Kiri Tegak
+                ctx.fillStyle = '#f472b6'; ctx.strokeStyle = '#000000'; ctx.lineWidth = 3.5;
+                ctx.beginPath(); ctx.ellipse(-size*0.4, -size*0.9, size*0.25, size*0.6, -Math.PI/18, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Telinga Kanan Folded (Tekuk Imut!)
+                ctx.save();
+                ctx.translate(size*0.4, -size*0.9);
+                ctx.beginPath(); ctx.ellipse(0, 0, size*0.25, size*0.45, Math.PI/12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.restore();
+
+                // Kerudung Kepala Pink
+                ctx.beginPath(); ctx.arc(0, -size*0.1, size*0.9, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Wajah Putih Oval di Tengah
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.ellipse(0, size*0.05, size*0.65, size*0.55, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // BUNGA KUNING DI TELINGA KANAN (Aksesoris khas My Melody!)
+                ctx.save();
+                ctx.translate(size*0.42, -size*0.5);
+                ctx.fillStyle = '#fbbf24'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+                for (let i = 0; i < 5; i++) {
+                    ctx.rotate(Math.PI * 2 / 5);
+                    ctx.beginPath(); ctx.ellipse(0, -size*0.15, size*0.12, size*0.12, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                }
+                ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(0, 0, size*0.1, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.restore();
+
+                // Mata bulat manis
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath(); ctx.ellipse(-size*0.25, size*0.02, size*0.06, size*0.12, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(size*0.25, size*0.02, size*0.06, size*0.12, 0, 0, Math.PI*2); ctx.fill();
+
+                // Hidung Kuning Manis My Melody
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath(); ctx.ellipse(0, size*0.12, size*0.07, size*0.05, 0, 0, Math.PI*2); ctx.fill();
+
+                // Pipi Blush
+                ctx.fillStyle = '#fbcfe8';
+                ctx.beginPath(); ctx.arc(-size*0.45, size*0.15, size*0.1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size*0.45, size*0.15, size*0.1, 0, Math.PI*2); ctx.fill();
+
+                // Mulut senyum
+                ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.arc(0, size*0.2, size*0.07, 0, Math.PI); ctx.stroke();
+
+            } else if (selectedCharacter === 'pompompurin') {
+                // Gambar Pompompurin Bulat Kuning Keemasan
+                // Telinga Floppy di Samping Kepala
+                ctx.fillStyle = '#fbbf24'; ctx.strokeStyle = '#78350f'; ctx.lineWidth = 3.5;
+                ctx.beginPath(); ctx.ellipse(-size*1.0, -size*0.1, size*0.25, size*0.45, Math.PI/6, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.ellipse(size*1.0, -size*0.1, size*0.25, size*0.45, -Math.PI/6, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Tubuh Kepala Bulat Chubby Kuning
+                ctx.beginPath(); ctx.arc(0, 0, size*1.05, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // TOPI BARET COKELAT DI ATAS
+                ctx.fillStyle = '#78350f'; ctx.strokeStyle = '#451a03'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.ellipse(0, -size*0.95, size*0.35, size*0.18, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                // Kuncir topi
+                ctx.beginPath(); ctx.rect(-size*0.05, -size*1.2, size*0.1, size*0.15); ctx.fill(); ctx.stroke();
+
+                // Mata Titik Hitam
+                ctx.fillStyle = '#451a03';
+                ctx.beginPath(); ctx.arc(-size*0.3, -size*0.1, size*0.06, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size*0.3, -size*0.1, size*0.06, 0, Math.PI*2); ctx.fill();
+
+                // Hidung & Mulut khas Pompompurin ("v" terbalik dan garis)
+                ctx.beginPath(); ctx.ellipse(0, -size*0.02, size*0.08, size*0.05, 0, 0, Math.PI*2); ctx.fill();
+                // Garis senyum
+                ctx.strokeStyle = '#451a03'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.arc(-size*0.06, size*0.08, size*0.06, 0, Math.PI); ctx.stroke();
+                ctx.beginPath(); ctx.arc(size*0.06, size*0.08, size*0.06, 0, Math.PI); ctx.stroke();
+
+                // Pipi Pink Merona
+                ctx.fillStyle = '#fbcfe8';
+                ctx.beginPath(); ctx.arc(-size*0.55, size*0.12, size*0.12, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size*0.55, size*0.12, size*0.12, 0, Math.PI*2); ctx.fill();
+
+            } else if (selectedCharacter === 'hellokitty') {
+                // Gambar Hello Kitty Kucing Putih Ikonik
+                // Telinga Kucing Putih Segitiga
+                ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#000000'; ctx.lineWidth = 3.5;
+                ctx.beginPath();
+                ctx.moveTo(-size*0.8, -size*0.5); ctx.lineTo(-size*0.9, -size*1.2); ctx.lineTo(-size*0.2, -size*0.7);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(size*0.8, -size*0.5); ctx.lineTo(size*0.9, -size*1.2); ctx.lineTo(size*0.2, -size*0.7);
+                ctx.closePath(); ctx.fill(); ctx.stroke();
+
+                // Kepala Oval Lebar Hello Kitty
+                ctx.beginPath(); ctx.ellipse(0, 0, size*1.15, size*0.88, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // PITA MERAH BESAR DI TELINGA KIRI
+                ctx.save();
+                ctx.translate(-size*0.52, -size*0.62);
+                ctx.fillStyle = '#ef4444'; ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.5;
+                // Sayap pita kiri
+                ctx.beginPath(); ctx.ellipse(-size*0.22, 0, size*0.2, size*0.16, -Math.PI/12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                // Sayap pita kanan
+                ctx.beginPath(); ctx.ellipse(size*0.22, 0, size*0.2, size*0.16, Math.PI/12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                // Pusat pita bulat
+                ctx.beginPath(); ctx.arc(0, 0, size*0.12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.restore();
+
+                // Kumis Khas Hello Kitty (3 Kiri, 3 Kanan)
+                ctx.strokeStyle = '#000000'; ctx.lineWidth = 3;
+                // Kumis kiri
+                ctx.beginPath(); ctx.moveTo(-size*0.8, -size*0.05); ctx.lineTo(-size*1.2, -size*0.08); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(-size*0.82, size*0.1); ctx.lineTo(-size*1.25, size*0.1); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(-size*0.8, size*0.25); ctx.lineTo(-size*1.2, size*0.28); ctx.stroke();
+                // Kumis kanan
+                ctx.beginPath(); ctx.moveTo(size*0.8, -size*0.05); ctx.lineTo(size*1.2, -size*0.08); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(size*0.82, size*0.1); ctx.lineTo(size*1.25, size*0.1); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(size*0.8, size*0.25); ctx.lineTo(size*1.2, size*0.28); ctx.stroke();
+
+                // Mata Manik Hitam Oval
+                ctx.fillStyle = '#000000';
+                ctx.beginPath(); ctx.ellipse(-size*0.35, size*0.05, size*0.07, size*0.12, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(size*0.35, size*0.05, size*0.07, size*0.12, 0, 0, Math.PI*2); ctx.fill();
+
+                // Hidung Kecil Oval Kuning
+                ctx.fillStyle = '#facc15';
+                ctx.beginPath(); ctx.ellipse(0, size*0.18, size*0.08, size*0.06, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+            } else if (selectedCharacter === 'pochacco') {
+                // Gambar Pochacco Putih Berhidung Hitam Manis
+                // Telinga Floppy Panjang Hitam Gelap di Samping Kepala
+                ctx.fillStyle = '#1e293b'; ctx.strokeStyle = '#000000'; ctx.lineWidth = 3.5;
+                ctx.beginPath(); ctx.ellipse(-size*0.95, 0, size*0.24, size*0.5, Math.PI/7, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.ellipse(size*0.95, 0, size*0.24, size*0.5, -Math.PI/7, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Kepala Putih Bulat Oval Pochacco
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.ellipse(0, 0, size*0.98, size*0.88, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+
+                // Mata Dot Hitam
+                ctx.fillStyle = '#000000';
+                ctx.beginPath(); ctx.arc(-size*0.3, -size*0.05, size*0.06, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size*0.3, -size*0.05, size*0.06, 0, Math.PI*2); ctx.fill();
+
+                // Hidung Besar Hitam Pochacco yang Menggemaskan
+                ctx.beginPath(); ctx.ellipse(0, size*0.08, size*0.1, size*0.07, 0, 0, Math.PI*2); ctx.fill();
+
+                // Mulut Senyum Halus
+                ctx.strokeStyle = '#000000'; ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.arc(0, size*0.2, size*0.06, 0, Math.PI); ctx.stroke();
+
+                // Pipi Blush Pink
+                ctx.fillStyle = '#fbcfe8';
+                ctx.beginPath(); ctx.arc(-size*0.5, size*0.18, size*0.1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(size*0.5, size*0.18, size*0.1, 0, Math.PI*2); ctx.fill();
             }
+
+            ctx.restore();
+        }
+
+        // Bantuan menggambar bintang kuning dekorasi
+        function drawStarShape(ctx, cx, cy, r, fill, stroke) {
+            ctx.save();
+            ctx.fillStyle = fill; ctx.strokeStyle = stroke; ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            let rot = Math.PI / 2 * 3;
+            let step = Math.PI / 5;
+            ctx.moveTo(cx, cy - r);
+            for (let i = 0; i < 5; i++) {
+                ctx.lineTo(cx + Math.cos(rot)*r, cy + Math.sin(rot)*r); rot += step;
+                ctx.lineTo(cx + Math.cos(rot)*(r*0.45), cy + Math.sin(rot)*(r*0.45)); rot += step;
+            }
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.restore();
+        }
+
+        // Menggambar Cupcake Berwarna Pastel (Khas Sanrio)
+        function drawCupcake(ctx, x, y, radius) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Gelas kertas bawah
+            ctx.fillStyle = '#93c5fd';
+            ctx.beginPath();
+            ctx.moveTo(-radius*0.7, 0);
+            ctx.lineTo(-radius*0.5, radius*0.8);
+            ctx.lineTo(radius*0.5, radius*0.8);
+            ctx.lineTo(radius*0.7, 0);
+            ctx.closePath(); ctx.fill();
+            ctx.lineWidth = 2.5; ctx.strokeStyle = '#3b82f6'; ctx.stroke();
+
+            // Krim manis pink lembut di atas
+            ctx.fillStyle = '#fbcfe8';
+            ctx.beginPath();
+            ctx.arc(0, -radius*0.1, radius*0.7, Math.PI, 0);
+            ctx.arc(-radius*0.3, -radius*0.3, radius*0.4, 0, Math.PI*2);
+            ctx.arc(radius*0.3, -radius*0.3, radius*0.4, 0, Math.PI*2);
+            ctx.fill();
+            ctx.strokeStyle = '#db2777'; ctx.stroke();
+
+            // Bintang hiasan di atas cupcake
+            drawStarShape(ctx, 0, -radius*0.5, radius*0.25, '#ffd700', '#d84b00');
+
+            ctx.restore();
+        }
+
+        // Menggambar Es Krim Cone Bintang (Khas Cinnamoroll)
+        function drawIceCream(ctx, x, y, radius) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Cone Kerucut cokelat di bawah
+            ctx.fillStyle = '#fed7aa';
+            ctx.beginPath();
+            ctx.moveTo(-radius*0.4, 0);
+            ctx.lineTo(0, radius*0.9);
+            ctx.lineTo(radius*0.4, 0);
+            ctx.closePath(); ctx.fill();
+            ctx.lineWidth = 2; ctx.strokeStyle = '#ea580c'; ctx.stroke();
+
+            // Es krim tumpuk hijau pastel
+            ctx.fillStyle = '#d9f99d';
+            ctx.beginPath();
+            ctx.arc(0, -radius*0.2, radius*0.5, 0, Math.PI*2);
+            ctx.fill(); ctx.strokeStyle = '#65a30d'; ctx.stroke();
+
+            // Es krim tumpuk pink pastel
+            ctx.fillStyle = '#fbcfe8';
+            ctx.beginPath();
+            ctx.arc(0, -radius*0.5, radius*0.38, 0, Math.PI*2);
+            ctx.fill(); ctx.strokeStyle = '#db2777'; ctx.stroke();
+
+            // Taburan bintang kecil-kecil
+            drawStarShape(ctx, -radius*0.12, -radius*0.2, radius*0.12, '#ffd700', '#d84b00');
+            drawStarShape(ctx, radius*0.15, -radius*0.4, radius*0.12, '#ffd700', '#d84b00');
+
             ctx.restore();
         }
 
         function drawBackground() {
             let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            if (activeGame === 'surf') { grad.addColorStop(0, '#0097e6'); grad.addColorStop(1, '#00a8ff'); }
-            else { grad.addColorStop(0, '#87CEEB'); grad.addColorStop(1, '#e0f7fa'); }
+            if (activeGame === 'surf') { grad.addColorStop(0, '#bae6fd'); grad.addColorStop(1, '#0284c7'); }
+            else { grad.addColorStop(0, '#bae6fd'); grad.addColorStop(1, '#fdf2f8'); }
             ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            // Awan Fluffy Putih
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
             entities.clouds.forEach(c => {
                 c.x -= c.speed; if (c.x < -120) c.x = canvas.width + 120;
                 ctx.beginPath(); ctx.arc(c.x, c.y, 30*c.scale, 0, Math.PI*2); ctx.arc(c.x+25*c.scale, c.y-10*c.scale, 40*c.scale, 0, Math.PI*2); ctx.arc(c.x+50*c.scale, c.y, 30*c.scale, 0, Math.PI*2); ctx.fill();
             });
 
             if (activeGame === 'catch' || activeGame === 'stack' || activeGame === null) {
-                ctx.fillStyle = '#2ecc71'; ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+                ctx.fillStyle = '#93c5fd'; ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
             }
         }
 
@@ -340,32 +771,54 @@
             livesDisplay.innerText = hearts;
         }
 
+        // --- LOOP UTAMA KONTROL 6 GAME ---
         function gameLoop() {
             if (!isPlaying) return;
             frames++;
             drawBackground();
 
+            // 1. TANGKAP MAKANAN (Menangkap Es Krim, Cupcake, & Apel)
             if (activeGame === 'catch') {
                 player.x += (player.targetX - player.x) * 0.15;
                 if (frames % 60 === 0) {
-                    let isSpike = Math.random() < 0.3;
-                    entities.items.push({ x: Math.random()*(canvas.width-40)+20, y: -20, isSpike: isSpike, type: isSpike ? '💣' : '🍎', speed: Math.random()*3+3 });
+                    let randType = Math.random();
+                    let type = 'apple';
+                    if (randType < 0.3) type = 'spike';
+                    else if (randType < 0.55) type = 'icecream';
+                    else if (randType < 0.8) type = 'cupcake';
+
+                    entities.items.push({ x: Math.random()*(canvas.width-80)+40, y: -40, type: type, speed: Math.random()*3+3 });
                 }
+
+                let isNearFood = false;
                 entities.items.forEach((item, index) => {
                     item.y += item.speed;
-                    ctx.font = "30px Arial"; ctx.fillText(item.type, item.x, item.y);
+
+                    // Menggambar makanan
+                    if (item.type === 'apple') drawApple(ctx, item.x, item.y, 25);
+                    else if (item.type === 'icecream') drawIceCream(ctx, item.x, item.y, 25);
+                    else if (item.type === 'cupcake') drawCupcake(ctx, item.x, item.y, 25);
+                    else if (item.type === 'spike') drawSpike(ctx, item.x, item.y, 28, frames*0.05);
+
+                    if (item.type !== 'spike' && item.y < player.y && item.y > player.y - 200 && Math.abs(item.x - player.x) < 80) {
+                        isNearFood = true;
+                    }
+
                     if (Math.hypot(item.x - player.x, item.y - player.y) < 50) {
-                        if (item.isSpike) { lives--; playSound('hurt'); popText(item.x, item.y, '-1 ❤️', '#e74c3c'); }
-                        else { score += 10; playSound('eat'); popText(item.x, item.y, '+10', '#fff'); }
+                        if (item.type === 'spike') { lives--; playSound('hurt'); popText(item.x, item.y, '-1 ❤️', '#e74c3c'); }
+                        else { score += 10; playSound('eat'); popText(item.x, item.y, '+10', '#ec4899'); }
                         entities.items.splice(index, 1); updateHUD();
                     }
                 });
-                drawKirby(ctx, player.x, player.y, player.radius, 0, false);
+                drawActivePlayer(ctx, player.x, player.y, player.radius, 0, isNearFood);
             }
 
+            // 2. TERBANG BEBAS
             else if (activeGame === 'fly') {
                 if (!gameStarted) {
                     player.y = canvas.height/2 + Math.sin(frames*0.05)*10;
+                    drawWarpStar(ctx, player.x, player.y + 15, 38, 0);
+                    drawActivePlayer(ctx, player.x, player.y - 12, player.radius - 5, 0, false);
                     ctx.fillStyle = '#1e3a8a'; ctx.font = "bold 20px Arial"; ctx.textAlign = 'center'; ctx.fillText("KETUK UNTUK TERBANG!", canvas.width/2, canvas.height/2 - 40);
                 } else {
                     player.vy += 0.35; player.y += player.vy;
@@ -377,20 +830,22 @@
                     }
                     entities.obstacles.forEach((obs, index) => {
                         obs.x -= 4;
-                        ctx.fillStyle = '#fdcb6e'; ctx.fillRect(obs.x, 0, obs.width, obs.top);
+                        ctx.fillStyle = '#fbcfe8'; ctx.fillRect(obs.x, 0, obs.width, obs.top);
                         ctx.fillRect(obs.x, canvas.height - obs.bottom, obs.width, obs.bottom);
                         if (!obs.passed && obs.x < player.x) { score += 20; obs.passed = true; playSound('eat'); updateHUD(); }
                         if (player.x + 30 > obs.x && player.x - 30 < obs.x + obs.width && (player.y - 30 < obs.top || player.y + 30 > canvas.height - obs.bottom)) {
                             lives--; entities.obstacles.splice(index, 1); playSound('hurt'); updateHUD();
                         }
                     });
+                    drawWarpStar(ctx, player.x, player.y + 15, 38, player.vy*0.03);
+                    drawActivePlayer(ctx, player.x, player.y - 12, player.radius - 5, player.vy*0.04, false);
                 }
-                drawKirby(ctx, player.x, player.y, player.radius, player.vy*0.04, false);
             }
 
+            // 3. MEMANTUL PERMEN
             else if (activeGame === 'bounce') {
                 paddle.x += (player.targetX - paddle.width/2 - paddle.x)*0.15;
-                ctx.fillStyle = '#ff7675'; ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+                ctx.fillStyle = '#f472b6'; ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
                 if (!ball.active) {
                     ball.x = paddle.x + paddle.width/2; ball.y = paddle.y - ball.radius - 2;
                     ctx.fillStyle = '#1e3a8a'; ctx.font = "16px Arial"; ctx.textAlign='center'; ctx.fillText("KETUK UNTUK LUNCURKAN BOLA!", canvas.width/2, canvas.height/2+50);
@@ -408,9 +863,10 @@
                     });
                 }
                 bricks.forEach(b => { if (b.active) { ctx.fillStyle = b.color; ctx.fillRect(b.x, b.y, b.width, b.height); } });
-                drawKirby(ctx, ball.x, ball.y, ball.radius, frames*0.05, false);
+                drawActivePlayer(ctx, ball.x, ball.y, ball.radius, frames*0.05, false);
             }
 
+            // 4. LOMPAT AWAN
             else if (activeGame === 'jump') {
                 if (!gameStarted) {
                     ctx.fillStyle = '#1e3a8a'; ctx.font = "bold 20px Arial"; ctx.textAlign='center'; ctx.fillText("KETUK UNTUK LOMPAT TINGGI", canvas.width/2, canvas.height/2);
@@ -425,13 +881,14 @@
                         if (p.star) { ctx.font="20px Arial"; ctx.fillText("⭐", p.x+p.width/2-10, p.y-10); }
                         if (player.vy > 0 && player.x > p.x && player.x < p.x+p.width && player.y+35 > p.y && player.y+35 < p.y+25) {
                             player.vy = -12; playSound('jump');
-                            if (p.star) { p.star = false; score += 50; popText(p.x+p.width/2, p.y, '+50', '#f1c40f'); }
+                            if (p.star) { p.star = false; score += 50; popText(p.x+p.width/2, p.y, '+50', '#fbbf24'); }
                         }
                     });
                 }
-                drawKirby(ctx, player.x, player.y, player.radius, 0, player.vy < 0);
+                drawActivePlayer(ctx, player.x, player.y, player.radius, 0, player.vy < 0);
             }
 
+            // 5. SELANCAR OMBAK
             else if (activeGame === 'surf') {
                 player.y += (player.targetY - player.y)*0.12;
                 if (frames % 50 === 0) {
@@ -448,10 +905,11 @@
                     it.x -= 4; ctx.font = "30px Arial"; ctx.fillText(it.type, it.x, it.y);
                     if (Math.hypot(it.x - player.x, it.y - player.y) < 40) { score += 30; entities.items.splice(idx, 1); playSound('eat'); updateHUD(); }
                 });
-                ctx.fillStyle = '#fff'; ctx.fillRect(player.x - 45, player.y + 30, 80, 8);
-                drawKirby(ctx, player.x, player.y, player.radius, 0.1, false);
+                drawWarpStar(ctx, player.x - 10, player.y + 20, 35, 0.2);
+                drawActivePlayer(ctx, player.x, player.y, player.radius, 0.1, false);
             }
 
+            // 6. MENYUSUN DONAT
             else if (activeGame === 'stack') {
                 player.x += (player.targetX - player.x)*0.15;
                 if (frames % 70 === 0) {
@@ -469,7 +927,7 @@
                     }
                 });
                 if (stackTowerHeight > 0) { ctx.fillStyle = '#a29bfe'; ctx.fillRect(player.x - 40, player.y - stackTowerHeight, 80, stackTowerHeight); }
-                drawKirby(ctx, player.x, player.y, player.radius, 0, false);
+                drawActivePlayer(ctx, player.x, player.y, player.radius, 0, false);
             }
 
             entities.particles.forEach((p, idx) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.05; if(p.life<=0) entities.particles.splice(idx,1); else { ctx.fillStyle=p.color; ctx.globalAlpha=p.life; ctx.beginPath(); ctx.arc(p.x,p.y,4,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1; } });
@@ -479,10 +937,30 @@
             animationId = requestAnimationFrame(gameLoop);
         }
 
+        // Gambar Apel Merah
+        function drawApple(ctx, x, y, radius) {
+            ctx.save(); ctx.translate(x, y);
+            ctx.fillStyle = '#22c55e'; ctx.beginPath(); ctx.ellipse(radius*0.3, -radius*0.8, radius*0.4, radius*0.2, -Math.PI/4, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI*2); ctx.fill();
+            ctx.lineWidth = 2.5; ctx.strokeStyle = '#b91c1c'; ctx.stroke();
+            ctx.restore();
+        }
+
+        // Gambar Duri Bola Hitam Marah
+        function drawSpike(ctx, x, y, radius, rotation) {
+            ctx.save(); ctx.translate(x, y); ctx.rotate(rotation);
+            ctx.fillStyle = '#334155'; ctx.beginPath(); ctx.arc(0, 0, radius, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#64748b';
+            for(let i=0; i<8; i++) {
+                ctx.rotate(Math.PI / 4); ctx.beginPath(); ctx.moveTo(-radius*0.2, -radius*0.8); ctx.lineTo(radius*0.2, -radius*0.8); ctx.lineTo(0, -radius*1.3); ctx.fill();
+            }
+            ctx.restore();
+        }
+
         function drawLobbyBack() {
             if (activeGame !== null) return;
             drawBackground();
-            drawKirby(ctx, canvas.width/2, canvas.height - 100, 45, Math.sin(frames*0.05)*0.1, false);
+            drawActivePlayer(ctx, canvas.width/2, canvas.height - 100, 45, Math.sin(frames*0.05)*0.1, false);
             frames++; requestAnimationFrame(drawLobbyBack);
         }
         drawLobbyBack();
@@ -500,3 +978,5 @@
     </script>
 </body>
 </html>
+
+
