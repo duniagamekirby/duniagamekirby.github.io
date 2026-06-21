@@ -1,0 +1,502 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dunia Bermain Kirby: 6 Game Seru</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #87CEEB;
+            touch-action: none;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            user-select: none;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        .text-outline {
+            text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+        }
+        .title-outline {
+            text-shadow: 4px 4px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 4px 4px 0 #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="hud" class="fixed top-4 left-0 w-full px-6 flex justify-between items-center pointer-events-none z-10 hidden">
+        <div class="text-white text-2xl md:text-3xl font-black text-outline flex flex-col">
+            <span id="game-title-hud" class="text-pink-200 text-xs md:text-sm tracking-wider">GAME</span>
+            <span>Skor: <span id="score-display" class="text-yellow-300">0</span></span>
+        </div>
+        <div id="lives-display" class="text-3xl md:text-4xl text-outline tracking-wider">
+            ❤️❤️❤️❤️❤️
+        </div>
+    </div>
+
+    <div id="ui-layer" class="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-20 bg-black/30 backdrop-blur-sm transition-all duration-300">
+        
+        <div id="lobby-screen" class="pointer-events-auto bg-white/95 p-6 md:p-8 rounded-[3rem] shadow-2xl text-center border-8 border-pink-300 max-w-4xl mx-4 transform scale-100 transition-all max-h-[95vh] overflow-y-auto">
+            <h1 class="text-4xl md:text-5xl font-black text-pink-500 mb-1 tracking-widest title-outline">
+                KIRBY 6-IN-1 ARCADE
+            </h1>
+            <p class="text-xs md:text-sm text-blue-600 font-bold mb-4">Pilih salah satu dari 6 game seru dengan 5 hati penuh!</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-2">
+                <button id="choose-game1" class="bg-gradient-to-br from-pink-100 to-pink-200 hover:from-pink-200 hover:to-pink-300 border-4 border-pink-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                    <span class="text-3xl mb-1 animate-bounce">🍎</span>
+                    <span class="font-extrabold text-pink-700 text-sm md:text-base">1. Tangkap Makanan</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Geser Kirby untuk menangkap makanan jatuh!</span>
+                    <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-catch">0</span></span>
+                </button>
+                
+                <button id="choose-game2" class="bg-gradient-to-br from-yellow-100 to-yellow-200 hover:from-yellow-200 hover:to-yellow-300 border-4 border-yellow-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                    <span class="text-3xl mb-1 animate-pulse">⭐</span>
+                    <span class="font-extrabold text-yellow-700 text-sm md:text-base">2. Terbang Bintang</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Ketuk layar agar Kirby melayang melewati permen!</span>
+                    <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-fly">0</span></span>
+                </button>
+
+                <button id="choose-game3" class="bg-gradient-to-br from-green-100 to-green-200 hover:from-green-200 hover:to-green-300 border-4 border-green-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                    <span class="text-3xl mb-1 animate-bounce">🍬</span>
+                    <span class="font-extrabold text-green-700 text-sm md:text-base">3. Memantul Permen</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Pantulkan Kirby untuk menghancurkan permen!</span>
+                    <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-bounce">0</span></span>
+                </button>
+
+                <button id="choose-game4" class="bg-gradient-to-br from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 border-4 border-blue-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                    <span class="text-3xl mb-1 animate-pulse">☁️</span>
+                    <span class="font-extrabold text-blue-700 text-sm md:text-base">4. Lompat Tinggi</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Lompat dari awan ke awan setinggi mungkin!</span>
+                    <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-jump">0</span></span>
+                </button>
+
+                <button id="choose-game5" class="bg-gradient-to-br from-teal-100 to-teal-200 hover:from-teal-200 hover:to-teal-300 border-4 border-teal-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                    <span class="text-3xl mb-1 animate-bounce">🏄</span>
+                    <span class="font-extrabold text-teal-700 text-sm md:text-base">5. Selancar Ombak</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Geser naik-turun untuk menghindari pusaran air!</span>
+                    <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-surf">0</span></span>
+                </button>
+
+                <button id="choose-game6" class="bg-gradient-to-br from-purple-100 to-purple-200 hover:from-purple-200 hover:to-purple-300 border-4 border-purple-400 p-3 rounded-2xl transition transform hover:scale-105 flex flex-col items-center">
+                    <span class="text-3xl mb-1 animate-pulse">🧱</span>
+                    <span class="font-extrabold text-purple-700 text-sm md:text-base">6. Menyusun Balok</span>
+                    <span class="text-[11px] text-gray-600 mt-1 font-medium">Tangkap mainan balok berjatuhan untuk buat menara!</span>
+                    <span class="text-[11px] text-yellow-600 font-black mt-1">Terbaik: <span id="record-stack">0</span></span>
+                </button>
+            </div>
+        </div>
+
+        <div id="game-over-screen" class="hidden pointer-events-auto bg-white/95 p-8 md:p-12 rounded-[3rem] shadow-2xl text-center border-8 border-red-400 max-w-md mx-4 transform transition-all">
+            <h1 class="text-4xl md:text-5xl font-black text-red-500 mb-2 animate-pulse">Permainan Selesai!</h1>
+            <p id="game-over-title" class="text-lg text-blue-500 font-bold mb-4">Nama Game</p>
+            <p class="text-xl text-gray-700 mb-2 font-bold">Skor Kamu: <br><span id="final-score" class="text-5xl md:text-6xl text-yellow-500 text-outline">0</span></p>
+            <p id="new-record-msg" class="text-pink-500 font-extrabold text-xl mb-6 hidden animate-bounce">🎉 REKOR BARU! 🎉</p>
+            
+            <div class="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+                <button id="restart-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-black py-3 px-6 rounded-full text-lg shadow-[0_5px_0_#1e3a8a] transition transform hover:scale-105">
+                    Main Lagi!
+                </button>
+                <button id="lobby-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-black py-3 px-6 rounded-full text-lg shadow-[0_5px_0_#374151] transition transform hover:scale-105">
+                    Menu Utama
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const uiLayer = document.getElementById('ui-layer');
+        const lobbyScreen = document.getElementById('lobby-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const hud = document.getElementById('hud');
+        const scoreDisplay = document.getElementById('score-display');
+        const livesDisplay = document.getElementById('lives-display');
+        const finalScore = document.getElementById('final-score');
+        const newRecordMsg = document.getElementById('new-record-msg');
+        const gameTitleHud = document.getElementById('game-title-hud');
+        const gameOverTitle = document.getElementById('game-over-title');
+
+        const buttons = {
+            g1: document.getElementById('choose-game1'),
+            g2: document.getElementById('choose-game2'),
+            g3: document.getElementById('choose-game3'),
+            g4: document.getElementById('choose-game4'),
+            g5: document.getElementById('choose-game5'),
+            g6: document.getElementById('choose-game6'),
+            restart: document.getElementById('restart-btn'),
+            lobby: document.getElementById('lobby-btn')
+        };
+
+        // Skor Terbaik
+        let records = {
+            catch: parseInt(localStorage.getItem('rec_catch')) || 0,
+            fly: parseInt(localStorage.getItem('rec_fly')) || 0,
+            bounce: parseInt(localStorage.getItem('rec_bounce')) || 0,
+            jump: parseInt(localStorage.getItem('rec_jump')) || 0,
+            surf: parseInt(localStorage.getItem('rec_surf')) || 0,
+            stack: parseInt(localStorage.getItem('rec_stack')) || 0
+        };
+
+        function refreshLobbyScores() {
+            document.getElementById('record-catch').innerText = records.catch;
+            document.getElementById('record-fly').innerText = records.fly;
+            document.getElementById('record-bounce').innerText = records.bounce;
+            document.getElementById('record-jump').innerText = records.jump;
+            document.getElementById('record-surf').innerText = records.surf;
+            document.getElementById('record-stack').innerText = records.stack;
+        }
+        refreshLobbyScores();
+
+        let activeGame = null;
+        let isPlaying = false;
+        let gameStarted = false;
+        let animationId;
+        let score = 0;
+        let lives = 5; 
+        let frames = 0;
+
+        let entities = { items: [], obstacles: [], particles: [], text: [], clouds: [] };
+        
+        let bricks = [];
+        let paddle = { x: 0, y: 0, width: 140, height: 20 };
+        let ball = { x: 0, y: 0, vx: 0, vy: 0, radius: 18, active: false };
+        let platforms = [];
+        let stackTowerHeight = 0;
+
+        const player = { x: 0, y: 0, targetX: 0, targetY: 0, vy: 0, radius: 38, angle: 0, invincible: 0 };
+
+        let audioCtx = null;
+        function playSound(type) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+                if (type === 'eat' || type === 'point') {
+                    osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(900, now + 0.12);
+                    gain.gain.setValueAtTime(0.2, now); osc.start(now); osc.stop(now + 0.12);
+                } else if (type === 'hurt') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(50, now + 0.2);
+                    gain.gain.setValueAtTime(0.3, now); osc.start(now); osc.stop(now + 0.2);
+                } else if (type === 'jump') {
+                    osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now); osc.start(now); osc.stop(now + 0.1);
+                }
+            } catch(e){}
+        }
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        for(let i=0; i<6; i++) {
+            entities.clouds.push({ x: Math.random()*canvas.width, y: Math.random()*(canvas.height/2), speed: Math.random()*0.3+0.1, scale: Math.random()*0.5+0.5 });
+        }
+
+        function handleInput(clientX, clientY, isTap) {
+            if (!isPlaying) return;
+            if (activeGame === 'catch' || activeGame === 'stack') {
+                player.targetX = clientX;
+            } else if (activeGame === 'surf') {
+                player.targetY = clientY;
+            } else if (activeGame === 'fly') {
+                if (isTap) { gameStarted = true; player.vy = -7; playSound('jump'); }
+            } else if (activeGame === 'bounce') {
+                paddle.x = clientX - paddle.width / 2;
+                if (isTap && !ball.active) { ball.active = true; ball.vx = (Math.random()-0.5)*8; ball.vy = -9; playSound('jump'); }
+            } else if (activeGame === 'jump') {
+                player.targetX = clientX;
+                if (isTap && !gameStarted) gameStarted = true;
+            }
+        }
+
+        window.addEventListener('mousemove', e => handleInput(e.clientX, e.clientY, false));
+        window.addEventListener('touchmove', e => { if(isPlaying) e.preventDefault(); handleInput(e.touches[0].clientX, e.touches[0].clientY, false); }, { passive: false });
+        window.addEventListener('mousedown', e => handleInput(e.clientX, e.clientY, true));
+        window.addEventListener('touchstart', e => { if(isPlaying) e.preventDefault(); handleInput(e.touches[0].clientX, e.touches[0].clientY, true); }, { passive: false });
+
+        function startSelectGame(gameType) {
+            activeGame = gameType; isPlaying = true; gameStarted = false;
+            score = 0; frames = 0; lives = 5; 
+            entities.items = []; entities.obstacles = []; entities.particles = []; entities.text = [];
+            player.invincible = 0; player.vy = 0;
+
+            if (gameType === 'catch') {
+                player.x = canvas.width/2; player.y = canvas.height - 110; gameTitleHud.innerText = "1. TANGKAP MAKANAN"; gameStarted = true;
+            } else if (gameType === 'fly') {
+                player.x = 150; player.y = canvas.height/2; gameTitleHud.innerText = "2. TERBANG BINTANG";
+            } else if (gameType === 'bounce') {
+                paddle.width = 140; paddle.y = canvas.height - 80; paddle.x = canvas.width/2 - 70;
+                ball.active = false; initBricks(); gameTitleHud.innerText = "3. MEMANTUL PERMEN"; gameStarted = true;
+            } else if (gameType === 'jump') {
+                player.x = canvas.width/2; player.y = canvas.height - 150; player.vy = -12;
+                initPlatforms(); gameTitleHud.innerText = "4. LOMPAT TINGGI";
+            } else if (gameType === 'surf') {
+                player.x = 120; player.y = canvas.height/2; player.targetY = canvas.height/2; gameTitleHud.innerText = "5. SELANCAR OMBAK"; gameStarted = true;
+            } else if (gameType === 'stack') {
+                player.x = canvas.width/2; player.y = canvas.height - 80; stackTowerHeight = 0; gameTitleHud.innerText = "6. MENYUSUN BALOK"; gameStarted = true;
+            }
+
+            updateHUD();
+            uiLayer.classList.add('hidden'); lobbyScreen.classList.add('hidden'); gameOverScreen.classList.add('hidden'); hud.classList.remove('hidden');
+            if (animationId) cancelAnimationFrame(animationId);
+            gameLoop();
+        }
+
+        function triggerGameOver() {
+            isPlaying = false; hud.classList.add('hidden'); uiLayer.classList.remove('hidden'); gameOverScreen.classList.remove('hidden');
+            finalScore.innerText = score;
+            let key = 'rec_' + activeGame;
+            if (score > records[activeGame]) {
+                records[activeGame] = score;
+                localStorage.setItem(key, score);
+                refreshLobbyScores();
+                newRecordMsg.classList.remove('hidden');
+            } else {
+                newRecordMsg.classList.add('hidden');
+            }
+            gameOverTitle.innerText = gameTitleHud.innerText;
+        }
+
+        function initBricks() {
+            bricks = []; const colors = ['#ff7675', '#fdcb6e', '#74b9ff', '#55efc4'];
+            let bWidth = Math.floor((canvas.width - 40) / 8);
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 8; c++) {
+                    bricks.push({ x: 20 + c * bWidth, y: 90 + r * 32, width: bWidth - 6, height: 24, color: colors[r], active: true });
+                }
+            }
+        }
+
+        function initPlatforms() {
+            platforms = [{ x: canvas.width/2 - 80, y: canvas.height - 80, width: 160, height: 18, star: false }];
+            for (let i = 1; i < 8; i++) {
+                platforms.push({ x: Math.random()*(canvas.width-150), y: canvas.height - i*130, width: 150, height: 18, star: Math.random()<0.3 });
+            }
+        }
+
+        function drawKirby(ctx, x, y, size, angle, isMouthOpen) {
+            ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+            ctx.fillStyle = '#e10032';
+            ctx.beginPath(); ctx.ellipse(-size*0.5, size*0.6, size*0.35, size*0.2, -Math.PI/8, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(size*0.5, size*0.6, size*0.35, size*0.2, Math.PI/8, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#ffb6c1'; ctx.lineWidth = 3; ctx.strokeStyle = '#4a0e2e';
+            ctx.beginPath(); ctx.arc(0, 0, size, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#ff69b4'; ctx.beginPath(); ctx.ellipse(-size*0.5, size*0.15, size*0.15, size*0.08, 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(size*0.5, size*0.15, size*0.15, size*0.08, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#1e272e'; ctx.beginPath(); ctx.ellipse(-size*0.2, -size*0.15, size*0.1, size*0.25, 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(size*0.2, -size*0.15, size*0.1, size*0.25, 0, 0, Math.PI*2); ctx.fill();
+            if (isMouthOpen) {
+                ctx.fillStyle = '#9e1b42'; ctx.beginPath(); ctx.arc(0, size*0.15, size*0.2, 0, Math.PI*2); ctx.fill();
+            } else {
+                ctx.beginPath(); ctx.arc(0, size*0.1, size*0.08, 0, Math.PI); ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function drawBackground() {
+            let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            if (activeGame === 'surf') { grad.addColorStop(0, '#0097e6'); grad.addColorStop(1, '#00a8ff'); }
+            else { grad.addColorStop(0, '#87CEEB'); grad.addColorStop(1, '#e0f7fa'); }
+            ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            entities.clouds.forEach(c => {
+                c.x -= c.speed; if (c.x < -120) c.x = canvas.width + 120;
+                ctx.beginPath(); ctx.arc(c.x, c.y, 30*c.scale, 0, Math.PI*2); ctx.arc(c.x+25*c.scale, c.y-10*c.scale, 40*c.scale, 0, Math.PI*2); ctx.arc(c.x+50*c.scale, c.y, 30*c.scale, 0, Math.PI*2); ctx.fill();
+            });
+
+            if (activeGame === 'catch' || activeGame === 'stack' || activeGame === null) {
+                ctx.fillStyle = '#2ecc71'; ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+            }
+        }
+
+        function createExplosion(x, y, color) {
+            for(let i=0; i<8; i++) entities.particles.push({ x: x, y: y, vx: (Math.random()-0.5)*8, vy: (Math.random()-0.5)*8, life: 1, color: color });
+        }
+
+        function popText(x, y, str, col) {
+            entities.text.push({ x: x, y: y, str: str, col: col, alpha: 1 });
+        }
+
+        function updateHUD() {
+            scoreDisplay.innerText = score;
+            let hearts = ''; for(let i=0; i<lives; i++) hearts += '❤️';
+            livesDisplay.innerText = hearts;
+        }
+
+        function gameLoop() {
+            if (!isPlaying) return;
+            frames++;
+            drawBackground();
+
+            if (activeGame === 'catch') {
+                player.x += (player.targetX - player.x) * 0.15;
+                if (frames % 60 === 0) {
+                    let isSpike = Math.random() < 0.3;
+                    entities.items.push({ x: Math.random()*(canvas.width-40)+20, y: -20, isSpike: isSpike, type: isSpike ? '💣' : '🍎', speed: Math.random()*3+3 });
+                }
+                entities.items.forEach((item, index) => {
+                    item.y += item.speed;
+                    ctx.font = "30px Arial"; ctx.fillText(item.type, item.x, item.y);
+                    if (Math.hypot(item.x - player.x, item.y - player.y) < 50) {
+                        if (item.isSpike) { lives--; playSound('hurt'); popText(item.x, item.y, '-1 ❤️', '#e74c3c'); }
+                        else { score += 10; playSound('eat'); popText(item.x, item.y, '+10', '#fff'); }
+                        entities.items.splice(index, 1); updateHUD();
+                    }
+                });
+                drawKirby(ctx, player.x, player.y, player.radius, 0, false);
+            }
+
+            else if (activeGame === 'fly') {
+                if (!gameStarted) {
+                    player.y = canvas.height/2 + Math.sin(frames*0.05)*10;
+                    ctx.fillStyle = '#1e3a8a'; ctx.font = "bold 20px Arial"; ctx.textAlign = 'center'; ctx.fillText("KETUK UNTUK TERBANG!", canvas.width/2, canvas.height/2 - 40);
+                } else {
+                    player.vy += 0.35; player.y += player.vy;
+                    if (player.y > canvas.height || player.y < 0) { lives--; player.y = canvas.height/2; player.vy = 0; updateHUD(); playSound('hurt'); }
+                    
+                    if (frames % 100 === 0) {
+                        let h = Math.random()*(canvas.height-250)+50;
+                        entities.obstacles.push({ x: canvas.width, top: h, bottom: canvas.height - h - 180, width: 60, passed: false });
+                    }
+                    entities.obstacles.forEach((obs, index) => {
+                        obs.x -= 4;
+                        ctx.fillStyle = '#fdcb6e'; ctx.fillRect(obs.x, 0, obs.width, obs.top);
+                        ctx.fillRect(obs.x, canvas.height - obs.bottom, obs.width, obs.bottom);
+                        if (!obs.passed && obs.x < player.x) { score += 20; obs.passed = true; playSound('eat'); updateHUD(); }
+                        if (player.x + 30 > obs.x && player.x - 30 < obs.x + obs.width && (player.y - 30 < obs.top || player.y + 30 > canvas.height - obs.bottom)) {
+                            lives--; entities.obstacles.splice(index, 1); playSound('hurt'); updateHUD();
+                        }
+                    });
+                }
+                drawKirby(ctx, player.x, player.y, player.radius, player.vy*0.04, false);
+            }
+
+            else if (activeGame === 'bounce') {
+                paddle.x += (player.targetX - paddle.width/2 - paddle.x)*0.15;
+                ctx.fillStyle = '#ff7675'; ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+                if (!ball.active) {
+                    ball.x = paddle.x + paddle.width/2; ball.y = paddle.y - ball.radius - 2;
+                    ctx.fillStyle = '#1e3a8a'; ctx.font = "16px Arial"; ctx.textAlign='center'; ctx.fillText("KETUK UNTUK LUNCURKAN BOLA!", canvas.width/2, canvas.height/2+50);
+                } else {
+                    ball.x += ball.vx; ball.y += ball.vy;
+                    if (ball.x < 0 || ball.x > canvas.width) ball.vx *= -1;
+                    if (ball.y < 50) ball.vy *= -1;
+                    if (ball.y > canvas.height) { lives--; ball.active = false; playSound('hurt'); updateHUD(); }
+                    if (ball.y + ball.radius >= paddle.y && ball.x > paddle.x && ball.x < paddle.x + paddle.width) { ball.vy = -Math.abs(ball.vy); ball.vx = ((ball.x - (paddle.x+paddle.width/2))/paddle.width)*8; playSound('jump'); }
+                    
+                    bricks.forEach(b => {
+                        if (b.active && ball.x > b.x && ball.x < b.x+b.width && ball.y > b.y && ball.y < b.y+b.height) {
+                            b.active = false; ball.vy *= -1; score += 15; playSound('eat'); createExplosion(b.x+b.width/2, b.y+b.height/2, b.color); updateHUD();
+                        }
+                    });
+                }
+                bricks.forEach(b => { if (b.active) { ctx.fillStyle = b.color; ctx.fillRect(b.x, b.y, b.width, b.height); } });
+                drawKirby(ctx, ball.x, ball.y, ball.radius, frames*0.05, false);
+            }
+
+            else if (activeGame === 'jump') {
+                if (!gameStarted) {
+                    ctx.fillStyle = '#1e3a8a'; ctx.font = "bold 20px Arial"; ctx.textAlign='center'; ctx.fillText("KETUK UNTUK LOMPAT TINGGI", canvas.width/2, canvas.height/2);
+                } else {
+                    player.x += (player.targetX - player.x)*0.15; player.vy += 0.35; player.y += player.vy;
+                    if (player.y < canvas.height/2) { let diff = canvas.height/2 - player.y; player.y = canvas.height/2; score += 2; updateHUD(); platforms.forEach(p => p.y += diff); }
+                    if (player.y > canvas.height) { lives--; player.vy = -14; player.y = canvas.height/2; playSound('hurt'); updateHUD(); }
+                    
+                    platforms.forEach((p, idx) => {
+                        if (p.y > canvas.height) { platforms.splice(idx,1); platforms.push({ x: Math.random()*(canvas.width-150), y: -20, width: 150, height: 18, star: Math.random()<0.3 }); }
+                        ctx.fillStyle = '#fff'; ctx.fillRect(p.x, p.y, p.width, p.height);
+                        if (p.star) { ctx.font="20px Arial"; ctx.fillText("⭐", p.x+p.width/2-10, p.y-10); }
+                        if (player.vy > 0 && player.x > p.x && player.x < p.x+p.width && player.y+35 > p.y && player.y+35 < p.y+25) {
+                            player.vy = -12; playSound('jump');
+                            if (p.star) { p.star = false; score += 50; popText(p.x+p.width/2, p.y, '+50', '#f1c40f'); }
+                        }
+                    });
+                }
+                drawKirby(ctx, player.x, player.y, player.radius, 0, player.vy < 0);
+            }
+
+            else if (activeGame === 'surf') {
+                player.y += (player.targetY - player.y)*0.12;
+                if (frames % 50 === 0) {
+                    entities.obstacles.push({ x: canvas.width, y: Math.random()*(canvas.height-120)+60, radius: 25, type: '🌀' });
+                }
+                if (frames % 80 === 0) {
+                    entities.items.push({ x: canvas.width, y: Math.random()*(canvas.height-120)+60, radius: 20, type: '⭐' });
+                }
+                entities.obstacles.forEach((obs, idx) => {
+                    obs.x -= 5; ctx.font = "35px Arial"; ctx.fillText(obs.type, obs.x, obs.y);
+                    if (Math.hypot(obs.x - player.x, obs.y - player.y) < 45) { lives--; entities.obstacles.splice(idx, 1); playSound('hurt'); updateHUD(); }
+                });
+                entities.items.forEach((it, idx) => {
+                    it.x -= 4; ctx.font = "30px Arial"; ctx.fillText(it.type, it.x, it.y);
+                    if (Math.hypot(it.x - player.x, it.y - player.y) < 40) { score += 30; entities.items.splice(idx, 1); playSound('eat'); updateHUD(); }
+                });
+                ctx.fillStyle = '#fff'; ctx.fillRect(player.x - 45, player.y + 30, 80, 8);
+                drawKirby(ctx, player.x, player.y, player.radius, 0.1, false);
+            }
+
+            else if (activeGame === 'stack') {
+                player.x += (player.targetX - player.x)*0.15;
+                if (frames % 70 === 0) {
+                    entities.items.push({ x: Math.random()*(canvas.width-100)+50, y: -30, w: 70, h: 25, col: `hsl(${Math.random()*360}, 80%, 60%)`, speed: 3.5 });
+                }
+                entities.items.forEach((b, idx) => {
+                    b.y += b.speed;
+                    ctx.fillStyle = b.col; ctx.fillRect(b.x, b.y, b.w, b.h);
+                    ctx.strokeRect(b.x, b.y, b.w, b.h);
+                    if (b.y + b.h >= player.y - stackTowerHeight && b.x + b.w > player.x - 50 && b.x < player.x + 50) {
+                        score += 25; stackTowerHeight = Math.min(stackTowerHeight + 12, 150);
+                        entities.items.splice(idx, 1); playSound('eat'); updateHUD();
+                    } else if (b.y > canvas.height) {
+                        lives--; entities.items.splice(idx,1); playSound('hurt'); updateHUD();
+                    }
+                });
+                if (stackTowerHeight > 0) { ctx.fillStyle = '#a29bfe'; ctx.fillRect(player.x - 40, player.y - stackTowerHeight, 80, stackTowerHeight); }
+                drawKirby(ctx, player.x, player.y, player.radius, 0, false);
+            }
+
+            entities.particles.forEach((p, idx) => { p.x+=p.vx; p.y+=p.vy; p.life-=0.05; if(p.life<=0) entities.particles.splice(idx,1); else { ctx.fillStyle=p.color; ctx.globalAlpha=p.life; ctx.beginPath(); ctx.arc(p.x,p.y,4,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1; } });
+            entities.text.forEach((t, idx) => { t.y-=1.5; t.alpha-=0.03; if(t.alpha<=0) entities.text.splice(idx,1); else { ctx.fillStyle=t.col; ctx.font="bold 20px Arial"; ctx.fillText(t.str, t.x, t.y); } });
+
+            if (lives <= 0) { triggerGameOver(); return; }
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function drawLobbyBack() {
+            if (activeGame !== null) return;
+            drawBackground();
+            drawKirby(ctx, canvas.width/2, canvas.height - 100, 45, Math.sin(frames*0.05)*0.1, false);
+            frames++; requestAnimationFrame(drawLobbyBack);
+        }
+        drawLobbyBack();
+
+        // Penghubung Event Tombol
+        buttons.g1.addEventListener('click', () => startSelectGame('catch'));
+        buttons.g2.addEventListener('click', () => startSelectGame('fly'));
+        buttons.g3.addEventListener('click', () => startSelectGame('bounce'));
+        buttons.g4.addEventListener('click', () => startSelectGame('jump'));
+        buttons.g5.addEventListener('click', () => startSelectGame('surf'));
+        buttons.g6.addEventListener('click', () => startSelectGame('stack'));
+        buttons.restart.addEventListener('click', () => startSelectGame(activeGame));
+        buttons.lobby.addEventListener('click', () => { activeGame = null; isPlaying = false; uiLayer.classList.remove('hidden'); lobbyScreen.classList.remove('hidden'); gameOverScreen.classList.add('hidden'); hud.classList.add('hidden'); drawLobbyBack(); });
+
+    </script>
+</body>
+</html>
